@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Localizer</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Localizer</h1>
+    <table>
+      <tr>
+        <td colspan="2">
+          <button onclick="clearAll()">Clear All</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>Template Text</label>
+        </td>
+        <td>
+          <label>Localization Data</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <textarea id="templatetext" cols="38" rows="8"></textarea>
+        </td>
+        <td>
+          <textarea id="localizationdata" cols="38" rows="8"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <button id="showHideButton" onclick="showHideScript()">Show Script</button>
+          <textarea id="customScriptTextArea" cols="80" rows="8" style="display: none">
+function conversionLogic(templateText, localizationData) {
+
+  var localizedText = templateText;
+
+  var localizationDataArray = JSON.parse(localizationData);
+
+  //your logic begins below
+  for (i = 0; i < localizationDataArray.length; i++) {
+    var localizationItem = localizationDataArray[i];
+    var searchKey = "localized_" + localizationItem.id;
+    var regExp = new RegExp(searchKey, "g");
+    localizedText = localizedText.replace(regExp, localizationItem.english);
+  }
+  //your logic ends above
+
+  return localizedText;
+}
+          </textarea>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <button onclick="localize()">Localize</button>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <label>Localized Text</label>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <textarea id="localizedtext" cols="80" rows="8"></textarea>
+        </td>
+      </tr>
+    </table>
+    <script>
+      document.getElementById('templatetext').value = "localized_s0001 | localized_s0002 | localized_s0003 | localized_s0004";
+      document.getElementById('localizationdata').value = "[{\"id\":\"s0001\",\"english\":\"Virtual Assistant\",\"spanish\":\"Asistente virtual\",\"french\":\"Assistant Virtuel\",\"hindi\":\"आभासी सहायक\"},{\"id\":\"s0002\",\"english\":\"Launch Virtual Assistant\",\"spanish\":\"Iniciar asistente virtual\",\"french\":\"Lancer l'assistant virtuel\",\"hindi\":\"आभासी सहायक शुरू करें\"},{\"id\":\"s0003\",\"english\":\"yes\",\"spanish\":\"sí\",\"french\":\"oui\",\"hindi\":\"हाँ\"},{\"id\":\"s0004\",\"english\":\"no\",\"spanish\":\"No\",\"french\":\"non\",\"hindi\":\"नहीं\"}]";
+
+      function clearAll() {
+        document.getElementById('templatetext').value = "";
+        document.getElementById('localizationdata').value = "";
+        document.getElementById('localizedtext').value = "";
+      }
+
+      function showHideScript() {
+        var showHideButton = document.getElementById("showHideButton");
+        var customScriptTextArea = document.getElementById("customScriptTextArea");
+        if(customScriptTextArea.style.display == "block") {
+          showHideButton.innerHTML = "Show Script";
+          customScriptTextArea.style.display = "none";
+        }
+        else {
+          showHideButton.innerHTML = "Hide Script";
+          customScriptTextArea.style.display = "block";
+        }
+      }
+
+      function localize() {
+
+        var customScript = document.getElementById("customScriptTextArea").value;
+        eval(customScript);
+        eval("var templatetext = document.getElementById('templatetext').value; var localizationdata = document.getElementById('localizationdata').value; document.getElementById('localizedtext').value = conversionLogic(templatetext, localizationdata);");
+      }
+    </script>
+  </body>
+</html>
